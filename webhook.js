@@ -8,6 +8,13 @@ var config = require('./config.json')
 
 app.use(bodyParser.json())
 
+app.get('*', function (req, res, next) {
+  res.json({
+    code: 0,
+    message: 'git webhook server'
+  })
+})
+
 app.post('*', function (req, res, next) {
   if (req.get('X-Gitlab-Token')) {
     // gitlab
