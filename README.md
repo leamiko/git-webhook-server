@@ -1,6 +1,8 @@
-非常简单的 git webhook 服务，支持 gitlab 和 coding。
+非常简单的 git webhook 服务，支持 Gitlab 和 Coding。
 
-## 配置 config.json
+## 创建 config.json
+
+创建 config.json，可以从 config.example.json 复制。
 
 ```js
 {
@@ -14,8 +16,8 @@
 
 ## 启动服务
 
-```
-node app.js
+```bash
+node webhook.js
 
 or
 
@@ -24,7 +26,7 @@ pm2 start webhook.js
 // server listening at 0.0.0.0:13227
 ```
 
-默认端口 13227，可通过 export PORT 指定其他端口
+默认端口 13227，可通过 export PORT 指定其他端口。
 
 ## Actions
 
