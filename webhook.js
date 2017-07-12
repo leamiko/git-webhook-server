@@ -4,7 +4,7 @@ var exec = require('child_process').exec
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
-var config = require('./config.json')
+var config = fs.existsSync(path.join(__dirname, './config.json')) ? require('./config.json') : require('./config.example.json')
 
 app.use(bodyParser.json())
 
