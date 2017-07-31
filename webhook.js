@@ -25,60 +25,53 @@ app.post('*', function (req, res, next) {
   if (req.get('X-Gitlab-Token')) {
     // gitlab
     let token = req.get('X-Gitlab-Token')
-    handle(req, res, token)
+    handle(res, req.path, token, {
+      EVENT: req.body.object_kind,
+      REF: req.body.ref,
+      PROJECT_NAME: req.body.project.name,
+      PROJECT_NAMESPACE: req.body.project.namespace,
+      GIT_SSH_URL: req.body.project.git_ssh_url,
+      GIT_HTTP_URL: req.body.project.git_http_url,
+      GIT_HTTPS_URL: req.body.project.git_https_url
+    })
   } else if (req.get('X-Coding-Event')) {
     // coding
-    let token = req.get('token')
-    handle(req, res, token)
+    // let token = req.get('token')
+    return res.jsonHandle(1, 'unknow app')
   } else {
     return res.jsonHandle(1, 'unknow app')
   }
 })
 
-function handle (req, res, token) {
-  var {
-    object_kind,
-    before,
-    after,
-    ref,
-    checkout_sha,
-    user_id,
-    user_name,
-    user_email,
-    user_avatar,
-    project_id,
-    project,
-    repository,
-    commits,
-    total_commits_count
-  } = req.body
+function handle (res, pathname, token, info) {
+  const { EVENT, REF, PROJECT_NAME, PROJECT_NAMESPACE, GIT_SSH_URL, GIT_HTTP_URL, GIT_HTTPS_URL } = info
 
-  var actions = config[req.path]
+  var actions = config[pathname]
 
   if (!actions) {
-    return res.jsonHandle(2, `path ${req.path} is notfound`)
+    return res.jsonHandle(2, `path ${pathname} is notfound`)
   }
 
   if (token !== token) {
-    return res.jsonHandle(3, `${req.path} token error`)
+    return res.jsonHandle(3, `${pathname} token error`)
   }
 
-  if (object_kind in actions) {
-    execute(object_kind)
+  if (EVENT in actions) {
+    execute(EVENT)
   } else if ('*' in actions) {
     execute('*')
   } else {
-    return res.jsonHandle(4, `object_kind ${object_kind} is notfound`)
+    return res.jsonHandle(4, `event ${EVENT} is notfound`)
   }
 
-  function execute (kind) {
-    var shell = actions[kind]
-    if (!actions[kind]) {
-      return res.jsonHandle(`object_kind ${kind} is empty`)
+  function execute (_event) {
+    var shell = actions[_event]
+    if (!shell) {
+      return res.jsonHandle(`event ${_event} is empty`)
     }
 
     try {
-      shell = eval(`\`${actions[kind]}\``)
+      shell = eval(`\`${actions[_event]}\``)
     } catch (e) {
       return res.jsonHandle(5, `shell expression error`, e)
     }
