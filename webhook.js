@@ -22,7 +22,7 @@ app.get('*', function (req, res, next) {
 })
 
 app.post('*', function (req, res, next) {
-  if (req.get('X-Gitlab-Token')) {
+  if (req.get('X-Gitlab-Event')) {
     // gitlab
     let token = req.get('X-Gitlab-Token')
     handle(res, req.path, token, {
@@ -43,7 +43,7 @@ app.post('*', function (req, res, next) {
   }
 })
 
-function handle (res, pathname, token, info) {
+function handle (res, pathname, token = '', info) {
   const { EVENT, REF, PROJECT_NAME, PROJECT_NAMESPACE, GIT_SSH_URL, GIT_HTTP_URL, GIT_HTTPS_URL } = info
 
   var actions = config[pathname]
@@ -52,7 +52,7 @@ function handle (res, pathname, token, info) {
     return res.jsonHandle(2, `path ${pathname} is notfound`)
   }
 
-  if (token !== token) {
+  if (token !== actions.token) {
     return res.jsonHandle(3, `${pathname} token error`)
   }
 
