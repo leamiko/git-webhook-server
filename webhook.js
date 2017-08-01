@@ -87,10 +87,10 @@ function handle (res, pathname, token = '', info) {
       if (err) {
         return res.jsonHandle(6, `exec error: ${err}`)
       }
-      console.log('execute success', new Date ().toString())
       if (stdout) {
         console.log(stdout)
       }
+      console.log('execute success', new Date ().toString())
       res.jsonHandle(0, 'execute success')
     })
   }
