@@ -6,7 +6,12 @@ var app = express()
 var bodyParser = require('body-parser')
 var config = fs.existsSync(path.join(__dirname, './config.js')) ? require('./config.js') : require('./config.example.js')
 
-app.use(bodyParser.json())
+app.use(bodyParser.json({
+  // 有些仓库首次拉取时，文件数量特别多，对应的 commits 也会特别长，
+  // 很可能会超过 bodyParser 默认 100kb 的限制。
+  // 如果程序抛出 request entity too large 异常，可再适当加大。
+  limit: '10mb'
+}))
 
 app.use(function (req, res, next) {
   res.jsonHandle = function (code = 0, message = '', data = null) {
@@ -92,7 +97,12 @@ function handle (res, pathname, token = '', info) {
 }
 
 app.use(function (err, req, res, next) {
-  res.status(500).jsonHandle(500, 'server exception')
+  console.error(err)
+  res.status(500).json({
+    code: 500,
+    message: 'server exception',
+    data: null
+  })
 })
 
 var PORT = process.env.PORT || 13227
