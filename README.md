@@ -1,15 +1,15 @@
-非常简单的 git webhook 服务，目前仅支持 Gitlab。
+非常简单的 git webhook 服务，**目前仅支持 Gitlab**。
 
-## 配置 config.json
+## 配置 config.js
 
-拷贝 config.example.json 到 config.json。
+拷贝 config.example.js 到 config.js。
 
 ```js
-{
+module.exports = {
   "/test": {  // 请求路径
-    "token": "123",  // token
+    "token": "",  // token
     "*": "./bin/test.sh",  // 默认执行的脚本
-    "push": "./bin/test.sh ${project.name}"  // push 时执行的脚本，支持部分变量读取，参考下方变量
+    "push": "./bin/test.sh ${PROJECT_NAME}"  // push 时执行的脚本，支持变量读取，参考下方变量
   }
 }
 ```

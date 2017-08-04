@@ -1,7 +1,7 @@
 module.exports = {
   "/test": {
-    "token": "123",
+    "token": "",
     "*": "./bin/test.sh",
-    "push": "./bin/test.sh"
+    "push": "./bin/test.sh ${PROJECT_NAME}"
   }
 }
